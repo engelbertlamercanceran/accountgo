@@ -9,9 +9,10 @@ namespace Dto.Purchasing.Request
         [Required(ErrorMessage = "Required")]
         public int? VendorId { get; set; }
         [Required(ErrorMessage = "Required")]
-        public DateTime OrderDate { get; set; }
+        public DateTime? OrderDate { get; set; } = DateTime.Now;
         public int? PaymentTermId { get; set; }
         public string ReferenceNo { get; set; }
+       
         public List<CreatePOLine> PurchaseOrderLines { get; set; } = new();
     }
 }

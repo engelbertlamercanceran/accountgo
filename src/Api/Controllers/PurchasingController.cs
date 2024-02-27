@@ -6,6 +6,8 @@ using System.Linq;
 using System.Collections.Generic;
 using Services.Financial;
 using Dto.Purchasing.Response;
+using Dto.Purchasing.Request;
+using static Dto.Response.ServiceResponses;
 
 namespace Api.Controllers
 {
@@ -30,11 +32,11 @@ namespace Api.Controllers
         public IActionResult PurchaseOrders()
         {
             var purchaseOrders = _purchasingService.GetPurchaseOrders();
-            IList<Dto.Purchasing.PurchaseOrder> purchaseOrdersDto = new List<Dto.Purchasing.PurchaseOrder>();
+            IList<GetPurchaseOrder> purchaseOrdersDto = new List<GetPurchaseOrder>();
 
             foreach (var purchaseOrder in purchaseOrders)
             {
-                var purchaseOrderDto = new Dto.Purchasing.PurchaseOrder()
+                var purchaseOrderDto = new GetPurchaseOrder()
                 {
                     Id = purchaseOrder.Id,
                     No = purchaseOrder.No,
@@ -47,7 +49,7 @@ namespace Api.Controllers
 
                 foreach (var line in purchaseOrder.PurchaseOrderLines)
                 {
-                    var lineDto = new Dto.Purchasing.PurchaseOrderLine()
+                    var lineDto = new GetPurchaseOrderLine
                     {
                         ItemId = line.ItemId,
                         MeasurementId = line.MeasurementId,
@@ -184,7 +186,7 @@ namespace Api.Controllers
         }
         [HttpPost]
         [Route("[action]")]
-        public IActionResult SavePurchaseOrder([FromBody] Dto.Purchasing.PurchaseOrder purchaseOrderDto)
+        public IActionResult SavePurchaseOrder([FromBody] CreatePO purchaseOrderDto)
         {
             string[] errors = null;
 
@@ -214,7 +216,7 @@ namespace Api.Controllers
                 purchaseOrder.ReferenceNo = purchaseOrderDto.ReferenceNo;
                 purchaseOrder.PaymentTermId = purchaseOrderDto.PaymentTermId;
                 purchaseOrder.VendorId = purchaseOrderDto.VendorId;
-                purchaseOrder.Date = purchaseOrderDto.OrderDate;
+                purchaseOrder.Date = purchaseOrderDto.OrderDate.Value;
 
                 foreach (var line in purchaseOrderDto.PurchaseOrderLines)
                 {
@@ -278,11 +280,16 @@ namespace Api.Controllers
                     _purchasingService.UpdatePurchaseOrder(purchaseOrder);
                 }
 
-                return new OkObjectResult(Ok());
+                var response = new GeneralResponse(true, "PO Created");
+
+                return Ok(response);
             }
             catch (Exception ex)
             {
                 errors = new string[1] { ex.InnerException != null ? ex.InnerException.Message : ex.Message };
+
+                var response = new GeneralResponse(false, "An error occurred.");
+                response.Errors = errors.ToList();
                 return new BadRequestObjectResult(errors);
             }
         }

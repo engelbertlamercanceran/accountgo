@@ -16,7 +16,6 @@
         /// </summary>
         public string SKU { get; set; }
         public string ItemTaxGroup { get; set; }
-        public int MeasurementId { get; set; }
         //public string Measurement { get; set; }
         public GetMeasurement Measurement { get; set; } = new();
         public decimal Cost { get; set; }

@@ -4,7 +4,13 @@
 
 <RadzenDropDown LoadData=@DropdownLoadData AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                 Data=@chartOfAccts TextProperty="@nameof(BaseAccount.AccountName)" ValueProperty="@nameof(BaseAccount.Id)" AllowClear="false"
-                @bind-Value=SelectedId Change="()=> SelectedIdChanged.InvokeAsync(SelectedId)" class="w-100" />
+                @bind-Value=SelectedId Change="()=> SelectedIdChanged.InvokeAsync(SelectedId)" class="w-100" >
+    <EmptyTemplate>
+        <div class="p-3">
+            <span>Fetching data, please wait...</span>
+        </div>
+    </EmptyTemplate>
+</RadzenDropDown>
 
 
 @code {
@@ -13,12 +19,14 @@
     [Parameter]
     public EventCallback<int?> SelectedIdChanged{ get; set; }
 
-    [Inject] LookupRx lookupRx { get; set; } = default!;
+    [Inject] ILookupService lookupService { get; set; } = default!;
 
     protected IEnumerable<BaseAccount> chartOfAccts { get; set; } = Enumerable.Empty<BaseAccount>();
-    IEnumerable<BaseAccount> chartOfAcctsLookup{get{ return lookupRx.ChartOfAcctsLookup.Value; }}
-    protected override void OnInitialized()
+    IEnumerable<BaseAccount> chartOfAcctsLookup { get; set; } = Enumerable.Empty<BaseAccount>();
+
+    protected override async Task OnInitializedAsync()
     {
+        chartOfAcctsLookup = await lookupService.GetAccounts();
         chartOfAccts = chartOfAcctsLookup;
     }
 

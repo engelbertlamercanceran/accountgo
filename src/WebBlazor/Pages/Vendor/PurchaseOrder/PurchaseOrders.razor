@@ -1,0 +1,66 @@
+﻿@attribute [Route(PageRoutes.Vendor.PurchaseOrders)]
+@attribute [Authorize]
+@inherits PurchaseOrderBase
+
+@using Dto.Inventory.Response
+@using Dto.Purchasing.Response
+<div class="container-fluid content-padding">
+    <RadzenStack class="mb-3" JustifyContent="JustifyContent.SpaceBetween" AlignItems="AlignItems.Center" Orientation="Orientation.Horizontal">
+        <RadzenText class="m-0 text-success" TextAlign="TextAlign.Start" TextStyle="TextStyle.H5" TagName="TagName.H5">Purchase Orders</RadzenText>
+
+    </RadzenStack>
+
+    <RadzenStack>
+        <RadzenStack JustifyContent="JustifyContent.SpaceBetween" AlignItems="AlignItems.Center" Orientation="Orientation.Horizontal">
+            <RadzenTextBox Style="border-radius:7px" class="w-25" Placeholder="Search PO no or vendor"></RadzenTextBox>
+            <RadzenStack Orientation="Orientation.Horizontal">
+                <RadzenButton Icon="add_circle_outline" Text="New" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Click="GotoCreatePo"></RadzenButton>
+            </RadzenStack>
+        </RadzenStack>
+
+        <RadzenDataGrid @ref="grid" style="height: 600px"
+                        AllowVirtualization="true"
+                        IsLoading=@isLoading
+                        Data="@items"
+                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                        AllowSorting="true"
+                        AllowFiltering="true"
+                        AllowPaging="false"
+                        PagerHorizontalAlign="HorizontalAlign.Center"
+                        TItem="GetPurchaseOrder" ColumnWidth="150px">
+            <Columns>
+                <RadzenDataGridColumn TItem="GetPurchaseOrder"
+                                      Property="@nameof(GetPurchaseOrder.No)"
+                                      Filterable="true" Title="PO No."
+                                      Frozen="false"
+                                      TextAlign="TextAlign.Start" />
+                <RadzenDataGridColumn TItem="GetPurchaseOrder"
+                                      Property="@nameof(GetPurchaseOrder.VendorName)"
+                                      Filterable="true" Title="Vendor"
+                                      Frozen="false"
+                                      TextAlign="TextAlign.Start" />
+                <RadzenDataGridColumn TItem="GetPurchaseOrder"
+                                      Property="@nameof(GetPurchaseOrder.OrderDate)"
+                                      Filterable="true" Title="Order Date"
+                                      Frozen="false"
+                                      TextAlign="TextAlign.Start" />
+                <RadzenDataGridColumn TItem="GetPurchaseOrder"
+                                      Property="@nameof(GetPurchaseOrder.Amount)"
+                                      Filterable="true" Title="Amount"
+                                      Frozen="false"
+                                      TextAlign="TextAlign.Right" />
+                <RadzenDataGridColumn TItem="GetPurchaseOrder"
+                                      Property="@nameof(GetPurchaseOrder.ReferenceNo)"
+                                      Filterable="true" Title="Ref No."
+                                      Frozen="false"
+                                      TextAlign="TextAlign.Start" />
+                <RadzenDataGridColumn TItem="GetPurchaseOrder"
+                                      Property="@nameof(GetPurchaseOrder.Status)"
+                                      Filterable="true" Title="Status"
+                                      Frozen="false"
+                                      TextAlign="TextAlign.Start" />
+            </Columns>
+        </RadzenDataGrid>
+    </RadzenStack>
+
+</div>

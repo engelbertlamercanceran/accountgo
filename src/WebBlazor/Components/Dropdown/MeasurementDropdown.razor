@@ -4,7 +4,13 @@
 
 <RadzenDropDown LoadData=@DropdownLoadData AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                 Data=@data TextProperty="@nameof(GetMeasurement.Description)" ValueProperty="@nameof(GetMeasurement.Id)" AllowClear="false"
-                @bind-Value=SelectedId Change="()=> SelectedIdChanged.InvokeAsync(SelectedId)" class="w-100" />
+                @bind-Value=SelectedId Change="()=> SelectedIdChanged.InvokeAsync(SelectedId)" class="w-100" >
+    <EmptyTemplate>
+        <div class="p-3">
+            <span>Fetching data, please wait...</span>
+        </div>
+    </EmptyTemplate>
+</RadzenDropDown>
 
 @code {
     [Parameter]
@@ -12,14 +18,15 @@
     [Parameter]
     public EventCallback<int?> SelectedIdChanged { get; set; }
 
-    [Inject] LookupRx lookupRx { get; set; } = default!;
+    [Inject] ILookupService lookupService { get; set; } = default!;
 
     protected IEnumerable<GetMeasurement> data { get; set; } = Enumerable.Empty<GetMeasurement>();
 
-    IEnumerable<GetMeasurement> lookup { get { return lookupRx.MeasurementsLookup.Value; } }
+    IEnumerable<GetMeasurement> lookup { get; set; } = Enumerable.Empty<GetMeasurement>();
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        lookup = await lookupService.GetMeasurements();
         data = lookup;
     }
 
