@@ -30,7 +30,6 @@ namespace WebBlazor.Pages.Inventory.Items
 
         protected void GotoCreateItem()
         {
-            Console.WriteLine("Goto Create item");
             navigationManager.NavigateTo(PageRoutes.Inventory.CreateItem);
         }
     }

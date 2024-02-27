@@ -20,6 +20,8 @@ namespace WebBlazor.Pages
         [Inject]
         protected IInventoryService inventoryService { get; set; } = default!;
         [Inject]
+        protected IPurchasingService purchasingService { get; set; } = default!;
+        [Inject]
         protected LoaderRx loaderRx { get; set; } = default!;
         [Inject]
         protected LookupRx lookupRx { get; set; } = default!;

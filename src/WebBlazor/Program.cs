@@ -23,6 +23,7 @@ builder.Services.AddScoped<IUserAccount, UserAccountService>();
 builder.Services.AddScoped<ITaxService, TaxService>();
 builder.Services.AddScoped<ILookupService, LookupService>();
 builder.Services.AddScoped<IInventoryService, InventoryService>();
+builder.Services.AddScoped<IPurchasingService, PurchasingService>();
 builder.Services.AddSingleton<LoaderRx>();
 builder.Services.AddSingleton<LookupRx>();
 await builder.Build().RunAsync();

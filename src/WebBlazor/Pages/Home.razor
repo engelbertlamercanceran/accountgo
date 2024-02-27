@@ -40,31 +40,6 @@
         public double Revenue { get; set; }
     }
 
-    protected override async Task OnInitializedAsync()
-    {
-        DispatchLoadingEvent(true);
-        try
-        {
-            var task1 = lookupService.GetAccounts();
-            var task2 = lookupService.GetItems();
-            var task3 = lookupService.GetVendors();
-            var task4 = lookupService.GetItemCategories();
-            var task5 = lookupService.GetMeasurements();
-            var task6 = lookupService.GetPaymentTerms();
-            var task7 = lookupService.GetItemTaxGroups();
-            await Task.WhenAll(task1, task2, task3, task4, task5, task6, task7);
-            StateHasChanged();
-        }
-        catch(Exception ex)
-        {
-
-        }
-        finally
-        {
-            DispatchLoadingEvent(false);
-        }
-    }
-
     string FormatAsPHP(object value)
     {
         return ((double)value).ToString("C0", CultureInfo.CreateSpecificCulture("en-PH"));

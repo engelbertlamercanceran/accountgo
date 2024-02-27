@@ -19,6 +19,7 @@
         public static class Vendor
         {
             const string baseUrl = "vendor";
+            public const string PurchaseOrders = $"{baseUrl}/purchaseorders";
             public const string CreatePO = $"{baseUrl}/createpo";
         }
     }

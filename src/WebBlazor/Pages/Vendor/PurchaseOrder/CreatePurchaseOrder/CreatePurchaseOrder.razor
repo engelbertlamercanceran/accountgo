@@ -5,7 +5,7 @@
 @using Dto.Purchasing.Response
 @using Dto.Inventory.Response
 <div class="container-fluid main-container">
-    <EditForm Model="formModel" OnValidSubmit="Submit">
+    <EditForm Model="formModel" OnValidSubmit="OnValidSubmit" >
         <DataAnnotationsValidator />
     <div class="row gy-3">
             <div class="col-xl-3">
@@ -15,7 +15,7 @@
                         <RadzenText class="text-danger" TextStyle="TextStyle.Subtitle1" TagName="TagName.P" Text="*" />
                     </RadzenStack>
 
-                    <VendorDropdown @bind-SelectedId="formModel.VendorId"  />
+                    <VendorDropdown  @bind-SelectedId="formModel.VendorId" />
                     <ValidationMessage For="@(()=> formModel.VendorId)" />
                 </RadzenStack>
             </div>
@@ -31,7 +31,7 @@
             </div>
             <div class="col-xl-6">
                 <RadzenStack AlignItems="AlignItems.End">
-                    <RadzenButton ButtonType="ButtonType.Submit" Icon="save" ButtonStyle="ButtonStyle.Info" Text="Save" />
+                    <RadzenButton ButtonType="ButtonType.Submit" Icon="@("<i class=\"fa-regular fa-floppy-disk\"></i>")" ButtonStyle="ButtonStyle.Info" Text="Save" />
                 </RadzenStack>
 
             </div>
@@ -55,7 +55,8 @@
                                     PagerHorizontalAlign="HorizontalAlign.Center"
                                     TItem="CreatePOLine"
                                     EditMode="DataGridEditMode.Multiple"
-                                    RowUpdate="@OnUpdateRow" RowCreate="@OnCreateRow">
+                                    RowUpdate="@OnUpdateRow" RowCreate="@OnCreateRow"
+                                    >
 
                         <Columns>
                             <RadzenDataGridColumn TItem="CreatePOLine"
@@ -64,7 +65,8 @@
                                                   Frozen="false"
                                                   TextAlign="TextAlign.Start">
                                 <EditTemplate Context="poLine">
-                                    <ItemsDropdown @bind-SelectedId="poLine.ItemId" />
+                                    <ItemsDropdown @bind-SelectedId="poLine.ItemId" @bind-SelectedId:after="@(()=>OnAfterItemBind(poLine))" />
+                                    <ValidationMessage For="@(()=> poLine.ItemId)" />
                                 </EditTemplate>
                             </RadzenDataGridColumn>
 
@@ -74,7 +76,39 @@
                                                   Frozen="false"
                                                   TextAlign="TextAlign.Start">
                                 <EditTemplate Context="poLine">
-                                    <RadzenNumeric @bind-Value="poLine.Quantity" class="w-100" />
+                                    <RadzenNumeric @bind-Value="poLine.Quantity" @bind-Value:after="@(()=>OnComputeAmount(poLine))" class="w-100" />
+                                    <ValidationMessage For="@(()=> poLine.Quantity)" />
+                                </EditTemplate>
+                            </RadzenDataGridColumn>
+
+                            <RadzenDataGridColumn TItem="CreatePOLine"
+                                                  Property="@nameof(CreatePOLine.Cost)"
+                                                  Filterable="true" Title="Rate"
+                                                  Frozen="false"
+                                                  TextAlign="TextAlign.Start">
+                                <EditTemplate Context="poLine">
+                                    <RadzenNumeric @bind-Value="poLine.Cost" @bind-Value:after="@(()=>OnComputeAmount(poLine))" class="w-100" />
+                                </EditTemplate>
+                            </RadzenDataGridColumn>
+
+                            <RadzenDataGridColumn TItem="CreatePOLine"
+                                                  Property="@nameof(CreatePOLine.Discount)"
+                                                  Filterable="true" Title="Discount"
+                                                  Frozen="false"
+                                                  TextAlign="TextAlign.Start">
+                                <EditTemplate Context="poLine">
+                                    <RadzenNumeric @bind-Value="poLine.Discount" @bind-Value:after="@(()=>OnComputeAmount(poLine))" class="w-100" />
+                                </EditTemplate>
+                            </RadzenDataGridColumn>
+
+                            <RadzenDataGridColumn TItem="CreatePOLine"
+                                                  Property="@nameof(CreatePOLine.MeasurementName)"
+                                                  Filterable="true" Title="UoM"
+                                                  Frozen="false"
+                                                  TextAlign="TextAlign.Start">
+                                <EditTemplate Context="poLine">
+                                    <MeasurementDropdown @bind-SelectedId="poLine.MeasurementId" @bind-SelectedId:after="@(()=>OnAfterMeasurementBind(poLine))" />
+                                    <ValidationMessage For="@(()=> poLine.MeasurementId)" />
                                 </EditTemplate>
                             </RadzenDataGridColumn>
 
@@ -87,18 +121,7 @@
                                     <RadzenNumeric @bind-Value="poLine.Amount" class="w-100" />
                                 </EditTemplate>
                             </RadzenDataGridColumn>
-
-                            <RadzenDataGridColumn TItem="CreatePOLine"
-                                                  Property="@nameof(CreatePOLine.MeasurementId)"
-                                                  Filterable="true" Title="UoM"
-                                                  Frozen="false"
-                                                  TextAlign="TextAlign.Start">
-                                <EditTemplate Context="poLine">
-                                    <MeasurementDropdown @bind-SelectedId="poLine.MeasurementId" />
-                                </EditTemplate>
-                            </RadzenDataGridColumn>
-
-                            <RadzenDataGridColumn TItem="CreatePOLine" Context="poLine" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Frozen="true" FrozenPosition="FrozenColumnPosition.Right">
+                            <RadzenDataGridColumn TItem="CreatePOLine" Context="poLine" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Frozen="true" FrozenPosition="FrozenColumnPosition.Right">
                                 <Template Context="poLine">
                                     <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRow(poLine))" @onclick:stopPropagation="true">
                                     </RadzenButton>
